@@ -1,0 +1,257 @@
+/* @codetikki/animations — keyframes & utility classes.
+   All classes are prefixed `anim-`. Import once:
+   import '@codetikki/animations/styles.css'; */
+
+@keyframes anim-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes anim-spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes anim-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes anim-dot-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.4);
+    opacity: 0.3;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes anim-bar-stretch {
+  0%,
+  40%,
+  100% {
+    transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes anim-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes anim-progress-indeterminate {
+  0% {
+    left: -40%;
+  }
+  100% {
+    left: 110%;
+  }
+}
+
+@keyframes anim-progress-stripes {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 40px 0;
+  }
+}
+
+@keyframes anim-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes anim-marquee-reverse {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes anim-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes anim-float-x {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(10px) rotate(8deg);
+  }
+}
+
+@keyframes anim-gradient-pan {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes anim-blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -45px) scale(1.15);
+  }
+  66% {
+    transform: translate(-25px, 25px) scale(0.9);
+  }
+}
+
+@keyframes anim-confetti-fall {
+  0% {
+    transform: translateY(-10%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(320px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes anim-caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes anim-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes anim-draw-check {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes anim-pop-in {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes anim-wave-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- utility classes ---------- */
+
+.anim-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(128, 128, 128, 0.15) 25%,
+    rgba(128, 128, 128, 0.3) 50%,
+    rgba(128, 128, 128, 0.15) 75%
+  );
+  background-size: 200% 100%;
+  animation: anim-shimmer 1.4s ease-in-out infinite;
+}
+
+.anim-gradient-text {
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: anim-gradient-pan 4s ease infinite;
+}
+
+.anim-marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: anim-marquee var(--anim-marquee-duration, 20s) linear infinite;
+  will-change: transform;
+}
+
+.anim-marquee-reverse .anim-marquee-track {
+  animation-name: anim-marquee-reverse;
+}
+
+.anim-marquee-pause:hover .anim-marquee-track {
+  animation-play-state: paused;
+}
+
+.anim-caret {
+  display: inline-block;
+  width: 2px;
+  animation: anim-caret-blink 1s step-end infinite;
+}
+
+.anim-float {
+  animation: anim-float 3s ease-in-out infinite;
+}
+
+.anim-pop-in {
+  animation: anim-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-skeleton,
+  .anim-gradient-text,
+  .anim-marquee-track,
+  .anim-caret,
+  .anim-float,
+  .anim-pop-in {
+    animation: none;
+  }
+}

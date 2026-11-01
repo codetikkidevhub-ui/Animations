@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["vite/client", "react", "react-dom"],
+    "paths": {
+      "@codetikki/animations": ["../../packages/animations/src/index.ts"],
+      "@codetikki/animations/three": ["../../packages/animations/src/three/index.ts"],
+      "animations-src/*": ["../../packages/animations/src/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}

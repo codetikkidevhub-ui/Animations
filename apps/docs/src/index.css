@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+@import '@codetikki/animations/styles.css';
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: #0a0a0f;
+  color: #e2e8f0;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 5px;
+}
