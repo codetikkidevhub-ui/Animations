@@ -153,7 +153,7 @@ ${entry.usage}`;
               lineHeight: 1,
             }}
           >
-            {siteTheme === 'dark' ? '☀️' : '🌙'}
+            {siteTheme === 'dark' ? '�' : '🌌'}
           </button>
         </div>
         <div style={{ fontSize: 12, color: 'var(--site-muted)', marginBottom: 6 }}>{entry.category}</div>

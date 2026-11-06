@@ -3,38 +3,129 @@
 
 :root {
   color-scheme: dark;
-  --site-bg: #0a0a0f;
-  --site-surface: #0d0d17;
-  --site-surface2: #12121e;
-  --site-surface3: #1e1e30;
-  --site-card: #141422;
-  --site-border: #1e293b;
-  --site-border-strong: #334155;
-  --site-text: #e2e8f0;
-  --site-text-dim: #94a3b8;
-  --site-muted: #64748b;
-  --site-faint: #475569;
-  --site-code: #c7d2fe;
-  --site-accent: #818cf8;
-  --site-accent-soft: rgba(129, 140, 248, 0.12);
+  --site-bg: #050510;
+  --site-surface: #0b0b1a;
+  --site-surface2: #101024;
+  --site-surface3: #1a1a35;
+  --site-card: #0e0e22;
+  --site-border: #232347;
+  --site-border-strong: #3a3f6e;
+  --site-text: #e6e9ff;
+  --site-text-dim: #a5a8d0;
+  --site-muted: #6d719e;
+  --site-faint: #4a4d78;
+  --site-code: #93c5fd;
+  --site-accent: #22d3ee;
+  --site-accent-soft: rgba(34, 211, 238, 0.14);
 }
 
 :root[data-site-theme='light'] {
   color-scheme: light;
-  --site-bg: #f8fafc;
-  --site-surface: #ffffff;
-  --site-surface2: #f1f5f9;
-  --site-surface3: #e2e8f0;
-  --site-card: #ffffff;
-  --site-border: #e2e8f0;
-  --site-border-strong: #cbd5e1;
-  --site-text: #0f172a;
-  --site-text-dim: #475569;
-  --site-muted: #64748b;
-  --site-faint: #94a3b8;
-  --site-code: #4f46e5;
-  --site-accent: #6366f1;
-  --site-accent-soft: rgba(99, 102, 241, 0.1);
+  --site-bg: #e9edff;
+  --site-surface: #f8f9ff;
+  --site-surface2: #eef0ff;
+  --site-surface3: #dde2fa;
+  --site-card: #fbfbff;
+  --site-border: #c9ccef;
+  --site-border-strong: #9d9fd9;
+  --site-text: #191544;
+  --site-text-dim: #453f7d;
+  --site-muted: #6f68a8;
+  --site-faint: #9b93cd;
+  --site-code: #5b21b6;
+  --site-accent: #7c3aed;
+  --site-accent-soft: rgba(124, 58, 237, 0.14);
+}
+
+/* --- cosmic platform backdrop --- */
+/* z-index:0 makes body a stacking context so the ::before/::after layers
+   paint ABOVE body's background but below content — without it they hide. */
+body {
+  position: relative;
+  z-index: 0;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: -10%;
+  z-index: -1;
+  background:
+    radial-gradient(55% 45% at 12% 8%, rgba(124, 58, 237, 0.25), transparent 60%),
+    radial-gradient(50% 55% at 88% 15%, rgba(34, 211, 238, 0.18), transparent 65%),
+    radial-gradient(65% 55% at 50% 105%, rgba(236, 72, 153, 0.14), transparent 60%);
+  filter: blur(50px);
+  animation: nebulaDrift 36s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 22%, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1px 1px at 38% 64%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1.3px 1.3px at 66% 12%, rgba(255, 255, 255, 0.85), transparent),
+    radial-gradient(1px 1px at 84% 48%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1.6px 1.6px at 55% 82%, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(1px 1px at 25% 88%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1.2px 1.2px at 92% 75%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 5% 55%, rgba(255, 255, 255, 0.5), transparent);
+  animation: starTwinkle 4.5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+:root[data-site-theme='light'] body::before {
+  /* alien daylight — saturated aurora blobs */
+  background:
+    radial-gradient(55% 45% at 12% 8%, rgba(167, 139, 250, 0.5), transparent 62%),
+    radial-gradient(50% 55% at 88% 15%, rgba(34, 211, 238, 0.45), transparent 65%),
+    radial-gradient(45% 45% at 8% 90%, rgba(251, 191, 36, 0.32), transparent 60%),
+    radial-gradient(65% 55% at 55% 105%, rgba(236, 72, 153, 0.38), transparent 62%);
+}
+:root[data-site-theme='light'] body::after {
+  /* aurora curtain sweeping the sky */
+  display: block;
+  background: linear-gradient(
+    100deg,
+    transparent 28%,
+    rgba(34, 211, 238, 0.2) 42%,
+    rgba(167, 139, 250, 0.24) 53%,
+    rgba(236, 72, 153, 0.18) 63%,
+    transparent 78%
+  );
+  background-size: 220% 100%;
+  animation: auroraSweep 20s ease-in-out infinite alternate;
+}
+@keyframes auroraSweep {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
+}
+
+@keyframes nebulaDrift {
+  from {
+    transform: translate3d(-2.5%, -1.5%, 0) scale(1) rotate(0deg);
+  }
+  to {
+    transform: translate3d(2.5%, 2%, 0) scale(1.1) rotate(2deg);
+  }
+}
+@keyframes starTwinkle {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
 }
 
 body {
