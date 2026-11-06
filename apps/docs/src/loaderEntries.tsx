@@ -122,16 +122,31 @@ const loaders: [string, string][] = [
   ['spin-record', 'SpinRecord']
 ];
 
+const FAMILIES: [string, string[]][] = [
+  ['abyss', ['ChaosAttractor', 'VoidEye', 'FractalMelt', 'NeuralStorm', 'MetaballGoo', 'WarpTunnel', 'ImpossibleTri', 'TendrilMass', 'CorruptionWave', 'RiftPortal']],
+  ['cosmos', ['GalaxySpiral', 'SupernovaBurst', 'Starfall', 'NebulaDrift', 'PlanetRise', 'MeteorShower', 'BlackHole', 'Constellation', 'MoonPhases', 'SolarFlare', 'AuroraCrown', 'VoidPortal']],
+  ['cyber', ['MatrixRain', 'CircuitPulse', 'DataStream', 'ScanlineHolo', 'HoloGlitch', 'NeuralNet', 'BitCascade', 'RadarSweep', 'TerminalBoot', 'SignalBars', 'HexTicker', 'CoreReactor']],
+  ['desi', ['RangoliDust', 'DiyaFlame', 'MandalaSun', 'PaisleySwirl', 'ChakraSpin', 'LotusRing', 'HennaVine', 'JhumkaDangle', 'SparklerTrail', 'BangleOrbit', 'PeacockFan', 'TablaPulse']],
+  ['funk', ['DiscoBall', 'TubeMan', 'PachinkoDrop', 'IriBubble', 'PsychMandala', 'DanceFloor', 'FunkRibbons', 'BouncyLetters', 'SlimeMelt', 'SpinRecord']],
+  ['geometry', ['MorphPolygon', 'SpiroRose', 'KaleidoSpin', 'CubeWire', 'PyraStack', 'HexMosaic', 'RingSegments', 'Triangulate', 'PixelMorph', 'OrigamiFold', 'CrystalGrow', 'DodecaOrbit']],
+  ['liquid', ['InkDrop', 'LavaBlob', 'RippleTank', 'WaveOcean', 'BubbleRise', 'LiquidFill', 'SplashCrown', 'VortexDrain', 'OilSlick', 'RainStreak', 'DropletChain', 'TidalPulse']],
+  ['mechanical', ['GearTrain', 'PendulumWave', 'ClockDial', 'PistonPump', 'ConveyorDots', 'GyroScope', 'SpringCoil', 'OrbitGears', 'BallBearing', 'Metronome', 'CrankSpin', 'FlyWheel']],
+  ['nature', ['Fireflies', 'LeafFall', 'SnowDrift', 'FlameDance', 'WaveGrass', 'PetalSwirl', 'BirdFlock', 'CloudDrift', 'StormFlash', 'VineCurl', 'EmberRise', 'TidalMoon']],
+  ['playful', ['BounceBall', 'JellyWobble', 'OrbJuggle', 'ConfettiPop', 'RubberBand', 'SlinkyDrop', 'BalloonRise', 'SpinTop', 'GlowStick', 'PacChomp', 'WaveFlag', 'DiceRoll']],
+];
+const SUB: Record<string, string> = Object.fromEntries(
+  FAMILIES.flatMap(([fam, ns]) => ns.map((n) => [n, fam])),
+);
+
 export const loaderEntries: RegistryEntry[] = loaders.map(([id, name]) => {
   const Demo = (Gallery as unknown as Record<string, ComponentType<{ size?: number }>>)[name];
   return {
     id,
     name,
     category: 'Loading & progress',
+    sub: SUB[name],
     usage: `<${name} size={140} />`,
-    code: `import { ${name} } from '@codetikki/animations';
-
-<${name} size={140} />`,
+    code: `import { ${name} } from '@codetikki/animations';\n\n<${name} size={140} />`,
     Demo: () => <Demo size={140} />,
   };
 });

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimationProvider, PRESETS, type PresetName } from '@codetikki/animations';
 import { CodeBlock } from './components/CodeBlock';
+import { HomePage } from './components/HomePage';
 import { ReelDemo } from './components/ReelDemo';
 import { Sidebar } from './components/Sidebar';
 import { registry, EXPLAINERS } from './registry';
@@ -54,13 +55,13 @@ function PropsTable({ entry }: { entry: (typeof registry)[number] }) {
 }
 
 export function App() {
-  const [activeId, setActiveId] = useState(registry[0].id);
+  const [activeId, setActiveId] = useState('home');
   const [theme, setTheme] = useState<PresetName>('midnight');
   const [mode, setMode] = useState<Mode>('dark');
   const [siteTheme, setSiteTheme] = useState<SiteTheme>(
     () => (localStorage.getItem('site-theme') as SiteTheme) || 'dark',
   );
-  const entry = useMemo(() => registry.find((e) => e.id === activeId)!, [activeId]);
+  const entry = useMemo(() => registry.find((e) => e.id === activeId), [activeId]);
 
   useEffect(() => {
     document.documentElement.dataset.siteTheme = siteTheme;
@@ -68,6 +69,7 @@ export function App() {
   }, [siteTheme]);
 
   const usageCode = useMemo(() => {
+    if (!entry) return '';
     const isThree = entry.name.includes('3D');
     const pkg = isThree ? '@codetikki/animations/three' : '@codetikki/animations';
     const names = entry.name
@@ -94,23 +96,27 @@ ${entry.usage}`;
           window.scrollTo({ top: 0 });
         }}
       />
-      <main style={{ flex: 1, padding: '40px 48px', maxWidth: 900, boxSizing: 'border-box' }}>
-        <div
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        <header
           style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 20,
             display: 'flex',
             alignItems: 'center',
             gap: 10,
-            marginBottom: 24,
-            padding: '10px 14px',
-            border: '1px solid var(--site-border)',
-            borderRadius: 12,
-            background: 'var(--site-surface2)',
-            position: 'sticky',
-            top: 12,
-            zIndex: 10,
+            padding: '11px 48px',
+            borderBottom: '1px solid var(--site-border)',
+            background: 'color-mix(in srgb, var(--site-bg) 70%, transparent)',
+            backdropFilter: 'blur(16px) saturate(1.4)',
+            WebkitBackdropFilter: 'blur(16px) saturate(1.4)',
           }}
         >
-          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--site-muted)' }}>Theme</span>
+          <span style={{ fontSize: 12.5, color: 'var(--site-muted)', marginRight: 10 }}>
+            {entry ? `${entry.category} / ` : 'catalog / '}
+            <b style={{ color: 'var(--site-text)', fontWeight: 700 }}>{entry ? entry.name : 'Home'}</b>
+          </span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--site-muted)', marginLeft: 'auto' }}>Theme</span>
           <select
             value={theme}
             onChange={(e) => setTheme(e.target.value as PresetName)}
@@ -153,9 +159,12 @@ ${entry.usage}`;
               lineHeight: 1,
             }}
           >
-            {siteTheme === 'dark' ? '�' : '🌌'}
+            {siteTheme === 'dark' ? '🌅' : '🌌'}
           </button>
-        </div>
+        </header>
+        <main style={{ flex: 1, padding: '32px 48px', maxWidth: 900, boxSizing: 'border-box', width: '100%' }}>
+        {entry ? (
+          <>
         <div style={{ fontSize: 12, color: 'var(--site-muted)', marginBottom: 6 }}>{entry.category}</div>
         <h1 style={{ margin: '0 0 24px', fontSize: 28, fontWeight: 800, color: 'var(--site-text)' }}>{entry.name}</h1>
 
@@ -211,7 +220,59 @@ ${entry.usage}`;
           Source — copy into your project
         </h2>
         <CodeBlock code={entry.code} label={`${entry.name}.tsx`} />
-      </main>
+          </>
+        ) : (
+          <HomePage onBrowse={setActiveId} />
+        )}
+        <footer
+          style={{
+            marginTop: 56,
+            paddingTop: 14,
+            borderTop: '1px solid var(--site-border)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 14,
+            fontSize: 11,
+            color: 'var(--site-faint)',
+          }}
+        >
+          <span style={{ marginRight: 'auto' }}>© codetikki · apache-2.0</span>
+          {[
+            ['yashvilab.in', 'https://yashvilab.in'],
+            ['codetikki.co.in', 'https://codetikki.co.in'],
+            ['karyatikki.in', 'https://karyatikki.in'],
+          ].map(([label, url]) => (
+            <a
+              key={label}
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              title={label}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                color: 'var(--site-muted)',
+                textDecoration: 'none',
+                fontSize: 11,
+                opacity: 0.75,
+              }}
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: 'var(--site-accent)',
+                  opacity: 0.6,
+                }}
+              />
+              {label}
+            </a>
+          ))}
+        </footer>
+        </main>
+      </div>
     </div>
   );
 }

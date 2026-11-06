@@ -39,6 +39,7 @@ import {
 } from '@codetikki/animations';
 import { ParticleField } from '@codetikki/animations/three';
 import { loaderEntries } from './loaderEntries';
+import { notFoundEntries } from './notFoundEntries';
 
 import spinnerCode from 'animations-src/loading/Spinner.tsx?raw';
 import dotsCode from 'animations-src/loading/Dots.tsx?raw';
@@ -88,6 +89,8 @@ export interface RegistryEntry {
   id: string;
   name: string;
   category: string;
+  /** Optional sub-group inside the category (e.g. loader family). */
+  sub?: string;
   /** Short usage snippet shown above the source. */
   usage: string;
   /** Full component source for copy-paste. */
@@ -158,6 +161,7 @@ export const registry: RegistryEntry[] = [
     id: 'spinner',
     name: 'Spinner',
     category: 'Loading & progress',
+    sub: 'core',
     usage: `<Spinner size={40} variant="dual" color="#6366f1" />`,
     code: spinnerCode,
     props: [
@@ -178,6 +182,7 @@ export const registry: RegistryEntry[] = [
     id: 'dots',
     name: 'Dots',
     category: 'Loading & progress',
+    sub: 'core',
     usage: `<Dots size={10} count={4} color="#6366f1" />`,
     code: dotsCode,
     props: [
@@ -197,6 +202,7 @@ export const registry: RegistryEntry[] = [
     id: 'skeleton',
     name: 'Skeleton',
     category: 'Loading & progress',
+    sub: 'core',
     usage: `<Skeleton lines={3} height={14} />`,
     code: skeletonCode,
     props: [
@@ -216,6 +222,7 @@ export const registry: RegistryEntry[] = [
     id: 'progress-bar',
     name: 'ProgressBar',
     category: 'Loading & progress',
+    sub: 'core',
     usage: `<ProgressBar value={64} striped /> // or omit value for indeterminate`,
     code: progressBarCode,
     props: [
@@ -234,6 +241,7 @@ export const registry: RegistryEntry[] = [
     id: 'tesseract',
     name: 'Tesseract',
     category: 'Loading & progress',
+    sub: 'core',
     usage: `<Tesseract size={140} colors={['#6366f1', '#ec4899']} />`,
     code: tesseractCode,
     props: [
@@ -256,6 +264,7 @@ export const registry: RegistryEntry[] = [
     id: 'orbit-forge',
     name: 'OrbitForge',
     category: 'Loading & progress',
+    sub: 'signature',
     usage: `<OrbitForge size={140} />`,
     code: orbitForgeCode,
     props: [
@@ -275,6 +284,7 @@ export const registry: RegistryEntry[] = [
     id: 'sacred-bloom',
     name: 'SacredBloom',
     category: 'Loading & progress',
+    sub: 'signature',
     usage: `<SacredBloom size={140} petals={8} />`,
     code: sacredBloomCode,
     props: [
@@ -294,6 +304,7 @@ export const registry: RegistryEntry[] = [
     id: 'neon-pulse',
     name: 'NeonPulse',
     category: 'Loading & progress',
+    sub: 'signature',
     usage: `<NeonPulse size={140} bars={36} />`,
     code: neonPulseCode,
     props: [
@@ -313,6 +324,7 @@ export const registry: RegistryEntry[] = [
     id: 'quantum-grid',
     name: 'QuantumGrid',
     category: 'Loading & progress',
+    sub: 'signature',
     usage: `<QuantumGrid size={140} cells={9} />`,
     code: quantumGridCode,
     props: [
@@ -332,6 +344,7 @@ export const registry: RegistryEntry[] = [
     id: 'helix-dna',
     name: 'HelixDNA',
     category: 'Loading & progress',
+    sub: 'signature',
     usage: `<HelixDNA size={140} rungs={14} />`,
     code: helixDnaCode,
     props: [
@@ -351,6 +364,7 @@ export const registry: RegistryEntry[] = [
     id: 'comet-trail',
     name: 'CometTrail',
     category: 'Loading & progress',
+    sub: 'signature',
     usage: `<CometTrail size={140} comets={3} />`,
     code: cometTrailCode,
     props: [
@@ -824,6 +838,7 @@ export const registry: RegistryEntry[] = [
     ),
   },
   ...loaderEntries,
+  ...notFoundEntries,
 ];
 
 /** Short spoken/written explanation per component — en + optional hi. */

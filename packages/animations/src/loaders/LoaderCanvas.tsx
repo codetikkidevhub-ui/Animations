@@ -61,9 +61,17 @@ export function LoaderCanvas({
     if (!ctx) return;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = px * dpr;
-    canvas.height = px * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    let lw = px;
+    let lh = px;
+    const applySize = () => {
+      const r = canvas.getBoundingClientRect();
+      lw = Math.max(1, r.width || px);
+      lh = Math.max(1, r.height || px);
+      canvas.width = lw * dpr;
+      canvas.height = lh * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    applySize();
 
     let seedRef = s;
     const density = m.tier === 'lite' ? 'lite' : 'full';
@@ -71,7 +79,7 @@ export function LoaderCanvas({
     const still = m.reduce || m.tier === 'static';
 
     const paint = (t: number) =>
-      drawRef.current({ ctx, t: t * effectiveSpeed, w: px, h: px, rand: mulberryReused(seedRef), density });
+      drawRef.current({ ctx, t: t * effectiveSpeed, w: lw, h: lh, rand: mulberryReused(seedRef), density });
 
     // Simple LCG clone so a fresh rand stream is cheap per frame
     function mulberryReused(a: number) {
@@ -95,9 +103,18 @@ export function LoaderCanvas({
       raf = requestAnimationFrame(tick);
     };
 
+    let ro: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        applySize();
+        if (still) paint(0.6);
+      });
+      ro.observe(canvas);
+    }
+
     if (still) {
       paint(0.6);
-      return;
+      return () => ro?.disconnect();
     }
 
     const onVis = () => {
@@ -118,6 +135,7 @@ export function LoaderCanvas({
       cancelAnimationFrame(raf);
       document.removeEventListener('visibilitychange', onVis);
       io?.disconnect();
+      ro?.disconnect();
       seedRef = s;
     };
   }, [px, speed, s, m.reduce, m.tier, m.durationScale]);

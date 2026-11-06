@@ -8,23 +8,34 @@ interface SidebarProps {
 
 export function Sidebar({ active, onSelect }: SidebarProps) {
   const [open, setOpen] = useState<Set<string>>(() => new Set());
+  const [subOpen, setSubOpen] = useState<Set<string>>(() => new Set());
   const [collapsed, setCollapsed] = useState(false);
   const [query, setQuery] = useState('');
 
-  const activeCat = useMemo(
-    () => registry.find((e) => e.id === active)?.category,
-    [active],
-  );
+  const activeEntry = useMemo(() => registry.find((e) => e.id === active), [active]);
+  const activeCat = activeEntry?.category;
+  const activeSub = activeEntry?.sub;
 
-  // Keep the active item's category expanded
+  // Keep the active item's category + sub-group expanded
   useEffect(() => {
     if (activeCat) setOpen((s) => (s.has(activeCat) ? s : new Set([...s, activeCat])));
-  }, [activeCat]);
+    if (activeCat && activeSub) {
+      const k = `${activeCat}|${activeSub}`;
+      setSubOpen((s) => (s.has(k) ? s : new Set([...s, k])));
+    }
+  }, [activeCat, activeSub]);
 
   const toggle = (cat: string) =>
     setOpen((s) => {
       const next = new Set(s);
       next.has(cat) ? next.delete(cat) : next.add(cat);
+      return next;
+    });
+
+  const toggleSub = (key: string) =>
+    setSubOpen((s) => {
+      const next = new Set(s);
+      next.has(key) ? next.delete(key) : next.add(key);
       return next;
     });
 
@@ -87,7 +98,11 @@ export function Sidebar({ active, onSelect }: SidebarProps) {
           justifyContent: 'space-between',
         }}
       >
-        <div style={{ fontWeight: 800, fontSize: 17, color: 'var(--site-text)' }}>
+        <div
+          onClick={() => onSelect('home')}
+          style={{ fontWeight: 800, fontSize: 17, color: 'var(--site-text)', cursor: 'pointer' }}
+          title="Home"
+        >
           <span style={{ color: 'var(--site-accent)' }}>@</span>animations
           <div style={{ fontSize: 11, fontWeight: 400, color: 'var(--site-muted)', marginTop: 2 }}>
             {registry.length} components
@@ -160,27 +175,74 @@ export function Sidebar({ active, onSelect }: SidebarProps) {
               <span style={{ fontWeight: 400, opacity: 0.7 }}>{list.length}</span>
             </button>
             {expanded &&
-              list.map((e) => (
-                <button
-                  key={e.id}
-                  onClick={() => onSelect(e.id)}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '5px 16px 5px 30px',
-                    fontSize: 13.5,
-                    border: 'none',
-                    borderLeft: `2px solid ${active === e.id ? 'var(--site-accent)' : 'transparent'}`,
-                    background: active === e.id ? 'var(--site-accent-soft)' : 'transparent',
-                    color: active === e.id ? 'var(--site-code)' : 'var(--site-text-dim)',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  {e.name}
-                </button>
-              ))}
+              (() => {
+                const flat = list.filter((e) => !e.sub);
+                const groups = new Map<string, typeof list>();
+                for (const e of list) {
+                  if (!e.sub) continue;
+                  const g = groups.get(e.sub) ?? [];
+                  g.push(e);
+                  groups.set(e.sub, g);
+                }
+                const itemBtn = (e: (typeof list)[number], indent = 30) => (
+                  <button
+                    key={e.id}
+                    onClick={() => onSelect(e.id)}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: `5px 16px 5px ${indent}px`,
+                      fontSize: 13.5,
+                      border: 'none',
+                      borderLeft: `2px solid ${active === e.id ? 'var(--site-accent)' : 'transparent'}`,
+                      background: active === e.id ? 'var(--site-accent-soft)' : 'transparent',
+                      color: active === e.id ? 'var(--site-code)' : 'var(--site-text-dim)',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    {e.name}
+                  </button>
+                );
+                return (
+                  <>
+                    {flat.map((e) => itemBtn(e))}
+                    {[...groups].map(([sub, g]) => {
+                      const key = `${cat}|${sub}`;
+                      const subExp = q ? true : subOpen.has(key);
+                      return (
+                        <div key={sub}>
+                          <button
+                            onClick={() => toggleSub(key)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              width: '100%',
+                              textAlign: 'left',
+                              padding: '4px 16px 4px 30px',
+                              fontSize: 10,
+                              fontWeight: 700,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.07em',
+                              color: 'var(--site-faint)',
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              fontFamily: 'inherit',
+                            }}
+                          >
+                            <span style={{ width: 12, display: 'inline-block' }}>{subExp ? '▾' : '▸'}</span>
+                            <span style={{ flex: 1 }}>{sub}</span>
+                            <span style={{ fontWeight: 400 }}>{g.length}</span>
+                          </button>
+                          {subExp && g.map((e) => itemBtn(e, 40))}
+                        </div>
+                      );
+                    })}
+                  </>
+                );
+              })()}
           </div>
         );
       })}

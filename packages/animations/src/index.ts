@@ -103,3 +103,19 @@ export { useAnimationTheme } from './runtime/AnimationProvider';
 export { PRESETS, DEFAULT_PRESET } from './theme/presets';
 export type { PresetName, ThemePreset } from './theme/presets';
 export type { ThemeTokens } from './theme/tokens';
+
+// Simulation-tier 404 pages
+export { NotFoundSwarm } from './notfound/variants';
+export { NotFoundPhysics } from './notfound/variants';
+export { NotFoundSpaghettify } from './notfound/variants';
+export { NotFoundEntropy } from './notfound/variants';
+export { NotFoundMatrix } from './notfound/variants';
+export { NotFoundShatter } from './notfound/variants';
+export { NotFoundFluid } from './notfound/variants';
+export { NotFoundFractal } from './notfound/variants';
+export { NotFoundHyperEcho } from './notfound/variants';
+export { NotFoundPixelSort } from './notfound/variants';
+export { NotFoundCloth } from './notfound/variants';
+export { NotFoundNeon } from './notfound/variants';
+export { NotFoundBlackHole } from './notfound/variants';
+export { NotFoundStory } from './notfound/variants';
