@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import type { CSSProperties, ReactNode } from 'react';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface StaggerProps {
   children: ReactNode;
@@ -27,6 +28,7 @@ export function Stagger({
   className,
   style,
 }: StaggerProps) {
+  const m = useMotionPrefs();
   return (
     <motion.div
       className={className}
@@ -34,7 +36,7 @@ export function Stagger({
       initial="hidden"
       whileInView="visible"
       viewport={{ once, margin: '-60px' }}
-      transition={{ staggerChildren: stagger, delayChildren: delay }}
+      transition={{ staggerChildren: stagger * m.durationScale, delayChildren: delay }}
     >
       {children}
     </motion.div>
@@ -42,14 +44,23 @@ export function Stagger({
 }
 
 export function StaggerItem({ children, y = 20, className, style }: StaggerItemProps) {
+  const m = useMotionPrefs();
   return (
     <motion.div
       className={className}
       style={style}
-      variants={{
-        hidden: { opacity: 0, y },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-      }}
+      variants={
+        m.reduce
+          ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
+          : {
+              hidden: { opacity: 0, y },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.45 * m.durationScale, ease: 'easeOut' },
+              },
+            }
+      }
     >
       {children}
     </motion.div>

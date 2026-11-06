@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface TiltCardProps {
   children: ReactNode;
@@ -22,11 +23,13 @@ export function TiltCard({
   className,
   style,
 }: TiltCardProps) {
+  const m = useMotionPrefs();
   const ref = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState('perspective(800px)');
   const [transition, setTransition] = useState(`transform ${resetDuration}ms ease`);
 
   const onMove = (e: React.MouseEvent) => {
+    if (m.reduce) return;
     const rect = ref.current!.getBoundingClientRect();
     const px = (e.clientX - rect.left) / rect.width - 0.5;
     const py = (e.clientY - rect.top) / rect.height - 0.5;

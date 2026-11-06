@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'react';
+import { ensureKeyframes, KF } from '../runtime/keyframes';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface NotFoundProps {
   /** The large digits/characters shown floating. */
@@ -17,13 +19,22 @@ export interface NotFoundProps {
 export function NotFound({
   code = '404',
   title = 'Page not found',
-  message = "The page you're looking for doesn't exist or has been moved.",
+  message = "This page took a wrong turn at the last redirect — it happens to the best of us.",
   homeHref,
   homeLabel = 'Back to home',
   digitColor,
   className,
   style,
 }: NotFoundProps) {
+  const m = useMotionPrefs();
+  const float = ensureKeyframes('float', KF.float);
+  const pan = ensureKeyframes('gradient-pan', KF.gradientPan);
+
+  const accent = m.themed ? m.tokens.colors.accent : '#6366f1';
+  const accent2 = m.themed ? m.tokens.colors.accent2 : '#ec4899';
+  const gradient = `linear-gradient(135deg, ${accent}, ${accent2}, ${m.themed ? m.tokens.colors.accent : '#f59e0b'})`;
+  const scale = m.durationScale;
+
   return (
     <div
       className={className}
@@ -51,14 +62,14 @@ export function NotFound({
               fontWeight: 800,
               lineHeight: 1,
               color: digitColor,
-              backgroundImage: digitColor
-                ? undefined
-                : 'linear-gradient(135deg, #6366f1, #ec4899, #f59e0b)',
+              backgroundImage: digitColor ? undefined : gradient,
               backgroundSize: '200% 200%',
               WebkitBackgroundClip: digitColor ? undefined : 'text',
               backgroundClip: digitColor ? undefined : 'text',
               ...(digitColor ? {} : { color: 'transparent' }),
-              animation: `anim-float ${3 + i * 0.4}s ease-in-out ${i * 0.25}s infinite, anim-gradient-pan 6s ease infinite`,
+              animation: m.reduce
+                ? 'none'
+                : `${float} ${(3 + i * 0.4) * scale}s ease-in-out ${i * 0.25}s infinite, ${pan} ${6 * scale}s ease infinite`,
               display: 'inline-block',
             }}
           >
@@ -66,16 +77,16 @@ export function NotFound({
           </span>
         ))}
       </div>
-      <h1 style={{ margin: '16px 0 0', fontSize: '1.5rem', fontWeight: 700 }}>{title}</h1>
-      <p style={{ margin: 0, maxWidth: 420, opacity: 0.7 }}>{message}</p>
+      <h1 style={{ margin: '16px 0 0', fontSize: '1.5rem', fontWeight: 700, color: m.themed ? m.tokens.colors.text : undefined }}>{title}</h1>
+      <p style={{ margin: 0, maxWidth: 420, opacity: 0.7, color: m.themed ? m.tokens.colors.text : undefined }}>{message}</p>
       {homeHref && (
         <a
           href={homeHref}
           style={{
             marginTop: 20,
             padding: '10px 24px',
-            borderRadius: 8,
-            background: '#6366f1',
+            borderRadius: m.tokens.radius,
+            background: accent,
             color: '#fff',
             textDecoration: 'none',
             fontWeight: 600,

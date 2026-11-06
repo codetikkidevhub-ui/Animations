@@ -1,8 +1,10 @@
 import { motion } from 'motion/react';
 import type { ButtonHTMLAttributes, CSSProperties } from 'react';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'shine' | 'grow' | 'outline' | 'pill';
+  /** Background/accent color. Defaults to theme accent when themed. */
   color?: string;
   textColor?: string;
   /** Scale on hover. */
@@ -14,7 +16,7 @@ export interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElem
 /** Button with spring press feedback and hover variants. */
 export function AnimatedButton({
   variant = 'shine',
-  color = '#6366f1',
+  color,
   textColor = '#fff',
   hoverScale = 1.04,
   pressScale = 0.96,
@@ -22,14 +24,18 @@ export function AnimatedButton({
   style,
   ...rest
 }: AnimatedButtonProps) {
+  const m = useMotionPrefs();
+  const accent = color ?? (m.themed ? m.tokens.colors.accent : '#6366f1');
+  const scale = m.durationScale;
+
   const base: CSSProperties = {
     position: 'relative',
     overflow: 'hidden',
     padding: '10px 24px',
-    borderRadius: variant === 'pill' ? 999 : 10,
-    border: variant === 'outline' ? `2px solid ${color}` : 'none',
-    background: variant === 'outline' ? 'transparent' : color,
-    color: variant === 'outline' ? color : textColor,
+    borderRadius: variant === 'pill' ? 999 : m.tokens.radius,
+    border: variant === 'outline' ? `2px solid ${accent}` : 'none',
+    background: variant === 'outline' ? 'transparent' : accent,
+    color: variant === 'outline' ? accent : textColor,
     fontWeight: 600,
     fontSize: '0.95rem',
     cursor: 'pointer',
@@ -38,13 +44,13 @@ export function AnimatedButton({
 
   return (
     <motion.button
-      whileHover={{ scale: variant === 'grow' ? hoverScale : 1.02 }}
-      whileTap={{ scale: pressScale }}
-      transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+      whileHover={m.reduce ? undefined : { scale: variant === 'grow' ? hoverScale : 1.02 }}
+      whileTap={m.reduce ? undefined : { scale: pressScale }}
+      transition={{ type: 'spring', stiffness: 400 / scale, damping: 22 }}
       style={base}
       {...(rest as object)}
     >
-      {variant === 'shine' && (
+      {variant === 'shine' && !m.reduce && (
         <motion.span
           aria-hidden
           style={{
@@ -59,7 +65,7 @@ export function AnimatedButton({
           }}
           initial={{ left: '-80%' }}
           whileHover={{ left: '130%' }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
+          transition={{ duration: 0.6 * scale, ease: 'easeInOut' }}
         />
       )}
       <span style={{ position: 'relative' }}>{children}</span>

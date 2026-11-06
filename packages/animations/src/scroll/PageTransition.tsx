@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface PageTransitionProps {
   children: ReactNode;
@@ -22,6 +23,8 @@ const variants = {
   },
 } as const;
 
+const still = { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } };
+
 /**
  * Wraps a route/page so it animates in on mount and out on unmount.
  * Pair with `AnimatePresence` around your router outlet for exit animations.
@@ -32,14 +35,15 @@ export function PageTransition({
   duration = 0.4,
   className,
 }: PageTransitionProps) {
-  const v = variants[variant];
+  const m = useMotionPrefs();
+  const v = m.reduce ? still : variants[variant];
   return (
     <motion.div
       className={className}
       initial={v.initial}
       animate={v.animate}
       exit={v.exit}
-      transition={{ duration, ease: 'easeOut' }}
+      transition={{ duration: duration * m.durationScale, ease: 'easeOut' }}
     >
       {children}
     </motion.div>

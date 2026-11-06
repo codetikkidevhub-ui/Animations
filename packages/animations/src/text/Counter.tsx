@@ -2,6 +2,7 @@ import { animate } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useInView } from '../hooks/useInView';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface CounterProps {
   /** Target number. */
@@ -30,6 +31,7 @@ export function Counter({
   className,
   style,
 }: CounterProps) {
+  const m = useMotionPrefs();
   const { ref, inView } = useInView<HTMLSpanElement>({ once });
   const [value, setValue] = useState(from);
   const played = useRef(false);
@@ -37,13 +39,17 @@ export function Counter({
   useEffect(() => {
     if (!inView || (once && played.current)) return;
     played.current = true;
+    if (m.reduce) {
+      setValue(to);
+      return;
+    }
     const controls = animate(from, to, {
-      duration,
+      duration: duration * m.durationScale,
       ease: 'easeOut',
       onUpdate: (v) => setValue(v),
     });
     return () => controls.stop();
-  }, [inView, from, to, duration, once]);
+  }, [inView, from, to, duration, once, m.reduce, m.durationScale]);
 
   return (
     <span ref={ref} className={className} style={style}>

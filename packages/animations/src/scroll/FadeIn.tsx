@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import type { CSSProperties, ReactNode } from 'react';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface FadeInProps {
   children: ReactNode;
@@ -24,14 +25,15 @@ export function FadeIn({
   className,
   style,
 }: FadeInProps) {
+  const m = useMotionPrefs();
   return (
     <motion.div
       className={className}
       style={style}
-      initial={{ opacity: 0, y }}
+      initial={m.reduce ? false : { opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once, margin: '-60px' }}
-      transition={{ duration, delay, ease: 'easeOut' }}
+      transition={{ duration: duration * m.durationScale, delay, ease: 'easeOut' }}
     >
       {children}
     </motion.div>

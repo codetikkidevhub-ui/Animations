@@ -5,25 +5,32 @@ import {
   Confetti,
   Counter,
   CTABlock,
+  CometTrail,
   Dots,
   EmptyState,
   FadeIn,
   FeatureReveal,
   FloatingShapes,
+  HelixDNA,
   GradientMesh,
   GradientText,
   HeroBanner,
   Marquee,
+  NeonPulse,
   NotFound,
+  OrbitForge,
   PageTransition,
   Parallax,
   ProgressBar,
+  QuantumGrid,
+  SacredBloom,
   Skeleton,
   SlideIn,
   Spinner,
   Stagger,
   StaggerItem,
   SuccessCheck,
+  Tesseract,
   TextReveal,
   TiltCard,
   Toggle,
@@ -31,11 +38,19 @@ import {
   WaveDivider,
 } from '@codetikki/animations';
 import { ParticleField } from '@codetikki/animations/three';
+import { loaderEntries } from './loaderEntries';
 
 import spinnerCode from 'animations-src/loading/Spinner.tsx?raw';
 import dotsCode from 'animations-src/loading/Dots.tsx?raw';
 import skeletonCode from 'animations-src/loading/Skeleton.tsx?raw';
 import progressBarCode from 'animations-src/loading/ProgressBar.tsx?raw';
+import tesseractCode from 'animations-src/loading/Tesseract.tsx?raw';
+import orbitForgeCode from 'animations-src/loaders/OrbitForge.tsx?raw';
+import sacredBloomCode from 'animations-src/loaders/SacredBloom.tsx?raw';
+import neonPulseCode from 'animations-src/loaders/NeonPulse.tsx?raw';
+import quantumGridCode from 'animations-src/loaders/QuantumGrid.tsx?raw';
+import helixDnaCode from 'animations-src/loaders/HelixDNA.tsx?raw';
+import cometTrailCode from 'animations-src/loaders/CometTrail.tsx?raw';
 import notFoundCode from 'animations-src/status/NotFound.tsx?raw';
 import emptyStateCode from 'animations-src/status/EmptyState.tsx?raw';
 import successCheckCode from 'animations-src/status/SuccessCheck.tsx?raw';
@@ -96,8 +111,8 @@ export const CATEGORIES = [
 const card: React.CSSProperties = {
   padding: 20,
   borderRadius: 12,
-  border: '1px solid #334155',
-  background: '#141422',
+  border: '1px solid var(--site-border-strong)',
+  background: 'var(--site-card)',
   minWidth: 180,
 };
 
@@ -212,6 +227,143 @@ export const registry: RegistryEntry[] = [
       <div style={{ width: 300, display: 'flex', flexDirection: 'column', gap: 20 }}>
         <ProgressBar value={64} striped />
         <ProgressBar color="#ec4899" />
+      </div>
+    ),
+  },
+  {
+    id: 'tesseract',
+    name: 'Tesseract',
+    category: 'Loading & progress',
+    usage: `<Tesseract size={140} colors={['#6366f1', '#ec4899']} />`,
+    code: tesseractCode,
+    props: [
+      { name: 'size', type: 'number', default: '120', description: 'Bounding box in px' },
+      { name: 'colors', type: '[string, string]', default: "['#6366f1', '#ec4899']", description: '[near, far] edge colors keyed to 4D depth' },
+      { name: 'speed', type: 'number', default: '1', description: 'Time multiplier' },
+      { name: 'thickness', type: 'number', default: '1.5', description: 'Base edge width (px)' },
+      { name: 'glow', type: 'boolean', default: 'true', description: 'Drop-shadow glow' },
+      { name: 'portal', type: 'boolean', default: 'true', description: 'Rings, orbiting motes, breathing core' },
+    ],
+    Demo: () => (
+      <div style={{ display: 'flex', gap: 48, alignItems: 'center' }}>
+        <Tesseract size={140} />
+        <Tesseract size={100} colors={['#22d3ee', '#a3e635']} speed={1.6} />
+        <Tesseract size={70} colors={['#f59e0b', '#ef4444']} portal={false} speed={0.7} />
+      </div>
+    ),
+  },
+  {
+    id: 'orbit-forge',
+    name: 'OrbitForge',
+    category: 'Loading & progress',
+    usage: `<OrbitForge size={140} />`,
+    code: orbitForgeCode,
+    props: [
+      { name: 'size', type: 'number', default: '140', description: 'Canvas size in px' },
+      { name: 'colors', type: '[string, string]', description: '[inner, outer] orbit colors' },
+      { name: 'speed', type: 'number', default: '1', description: 'Time multiplier' },
+      { name: 'glow', type: 'boolean', default: 'true', description: 'Bloom around core/sparks' },
+    ],
+    Demo: () => (
+      <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
+        <OrbitForge size={140} />
+        <OrbitForge size={100} colors={['#f59e0b', '#ef4444']} speed={1.5} />
+      </div>
+    ),
+  },
+  {
+    id: 'sacred-bloom',
+    name: 'SacredBloom',
+    category: 'Loading & progress',
+    usage: `<SacredBloom size={140} petals={8} />`,
+    code: sacredBloomCode,
+    props: [
+      { name: 'size', type: 'number', default: '140', description: 'Canvas size in px' },
+      { name: 'colors', type: '[string, string]', description: '[inner, outer] petal colors' },
+      { name: 'petals', type: 'number', default: '8', description: 'Petals per ring' },
+      { name: 'speed', type: 'number', default: '1', description: 'Time multiplier' },
+    ],
+    Demo: () => (
+      <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
+        <SacredBloom size={140} />
+        <SacredBloom size={100} petals={6} colors={['#22d3ee', '#a78bfa']} speed={1.4} />
+      </div>
+    ),
+  },
+  {
+    id: 'neon-pulse',
+    name: 'NeonPulse',
+    category: 'Loading & progress',
+    usage: `<NeonPulse size={140} bars={36} />`,
+    code: neonPulseCode,
+    props: [
+      { name: 'size', type: 'number', default: '140', description: 'Canvas size in px' },
+      { name: 'colors', type: '[string, string]', description: '[core, wave] colors' },
+      { name: 'bars', type: 'number', default: '36', description: 'Equalizer bars' },
+      { name: 'speed', type: 'number', default: '1', description: 'Time multiplier' },
+    ],
+    Demo: () => (
+      <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
+        <NeonPulse size={140} />
+        <NeonPulse size={100} colors={['#f472b6', '#fbbf24']} speed={0.8} />
+      </div>
+    ),
+  },
+  {
+    id: 'quantum-grid',
+    name: 'QuantumGrid',
+    category: 'Loading & progress',
+    usage: `<QuantumGrid size={140} cells={9} />`,
+    code: quantumGridCode,
+    props: [
+      { name: 'size', type: 'number', default: '140', description: 'Canvas size in px' },
+      { name: 'colors', type: '[string, string]', description: '[near, far] cell colors' },
+      { name: 'cells', type: 'number', default: '9', description: 'Cells per side' },
+      { name: 'speed', type: 'number', default: '1', description: 'Time multiplier' },
+    ],
+    Demo: () => (
+      <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
+        <QuantumGrid size={140} />
+        <QuantumGrid size={100} cells={7} colors={['#f59e0b', '#ef4444']} />
+      </div>
+    ),
+  },
+  {
+    id: 'helix-dna',
+    name: 'HelixDNA',
+    category: 'Loading & progress',
+    usage: `<HelixDNA size={140} rungs={14} />`,
+    code: helixDnaCode,
+    props: [
+      { name: 'size', type: 'number', default: '140', description: 'Canvas size in px' },
+      { name: 'colors', type: '[string, string]', description: '[strandA, strandB]' },
+      { name: 'rungs', type: 'number', default: '14', description: 'Base-pair rungs' },
+      { name: 'speed', type: 'number', default: '1', description: 'Time multiplier' },
+    ],
+    Demo: () => (
+      <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
+        <HelixDNA size={140} />
+        <HelixDNA size={100} colors={['#a3e635', '#22d3ee']} speed={1.4} />
+      </div>
+    ),
+  },
+  {
+    id: 'comet-trail',
+    name: 'CometTrail',
+    category: 'Loading & progress',
+    usage: `<CometTrail size={140} comets={3} />`,
+    code: cometTrailCode,
+    props: [
+      { name: 'size', type: 'number', default: '140', description: 'Canvas size in px' },
+      { name: 'colors', type: '[string, string]', description: '[comet, star] colors' },
+      { name: 'comets', type: 'number', default: '3', description: 'Comet count' },
+      { name: 'speed', type: 'number', default: '1', description: 'Time multiplier' },
+      { name: 'seed', type: 'number', description: 'Reproducible dust field' },
+    ],
+    Demo: () => (
+      <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
+        <CometTrail size={140} />
+        <CometTrail size={100} comets={2} colors={['#22d3ee', '#f472b6']} />
       </div>
     ),
   },
@@ -567,7 +719,7 @@ export const registry: RegistryEntry[] = [
       { name: 'opacity', type: 'number', default: '0.35', description: 'Layer opacity' },
     ],
     Demo: () => (
-      <div style={{ position: 'relative', overflow: 'hidden', width: '100%', height: 220, borderRadius: 14, background: '#0f0f1a' }}>
+      <div style={{ position: 'relative', overflow: 'hidden', width: '100%', height: 220, borderRadius: 14, background: 'var(--site-surface)' }}>
         <FloatingShapes count={16} />
       </div>
     ),
@@ -602,7 +754,7 @@ export const registry: RegistryEntry[] = [
       { name: 'speed', type: 'number', default: '0.05', description: 'Rotation speed' },
     ],
     Demo: () => (
-      <div style={{ width: '100%', height: 240, borderRadius: 14, overflow: 'hidden', background: '#05050c' }}>
+      <div style={{ width: '100%', height: 240, borderRadius: 14, overflow: 'hidden', background: 'var(--site-bg)' }}>
         <ParticleField count={900} />
       </div>
     ),
@@ -671,4 +823,153 @@ export const registry: RegistryEntry[] = [
       <CTABlock title="Ready to" highlight="animate?" secondaryLabel="View docs" />
     ),
   },
+  ...loaderEntries,
 ];
+
+/** Short spoken/written explanation per component — en + optional hi. */
+export const EXPLAINERS: Record<string, { en: string; hi?: string }> = {
+  spinner: {
+    en: 'A classic loading ring. Simple, instant, works everywhere.',
+    hi: 'एक क्लासिक लोडिंग रिंग — सरल, तुरंत तैयार, हर जगह काम करता है।',
+  },
+  dots: {
+    en: 'Bouncing dots for inline loading — great inside buttons and text.',
+    hi: 'उछलते बिंदु — बटन या टेक्स्ट के साथ इनलाइन लोडिंग के लिए।',
+  },
+  skeleton: {
+    en: 'Shimmering placeholder blocks that hint at incoming content.',
+    hi: 'चमकते प्लेसहोल्डर ब्लॉक — कंटेंट आने तक स्क्रीन भरी रहती है।',
+  },
+  'progress-bar': {
+    en: 'Progress with animated stripes, determinate or indeterminate.',
+    hi: 'एनिमेटेड स्ट्राइप्स वाला प्रगति बार — तय या अनिश्चित।',
+  },
+  tesseract: {
+    en: 'A real 4D hypercube projected into 2D — our signature loader.',
+    hi: 'एक असली 4D हाइपरक्यूब, 2D में प्रोजेक्टेड — हमारा सिग्नेचर लोडर।',
+  },
+  'orbit-forge': {
+    en: 'Counter-rotating orbit rings, comet sparks and a breathing core.',
+    hi: 'उल्टी दिशा में घूमती रिंग्स, धूमकेतु चिंगारी और साँस लेता कोर।',
+  },
+  'sacred-bloom': {
+    en: 'A mandala bloom — petal rings unfolding like a breathing lotus.',
+    hi: 'मंडला ब्लूम — साँस लेते कमल की तरह खिलती पंखुड़ियों की रिंग्स।',
+  },
+  'neon-pulse': {
+    en: 'A circular neon equalizer pulsing like a heartbeat.',
+    hi: 'धड़कन की तरह धड़कता गोल नियॉन इक्वलाइज़र।',
+  },
+  'quantum-grid': {
+    en: 'A field of cells rippling outward like a disturbed lattice.',
+    hi: 'लहराती कोशिकाओं का क्षेत्र — जैसे हिला हुआ जालक।',
+  },
+  'helix-dna': {
+    en: 'A rotating DNA double helix with glowing rungs.',
+    hi: 'चमकती सीढ़ियों वाला घूमता DNA डबल हेलिक्स।',
+  },
+  'comet-trail': {
+    en: 'Comets with fading light trails orbiting a twinkling star.',
+    hi: 'टिमटिमाते तारे के चारों ओर रोशनी की लहर छोड़ते धूमकेतु।',
+  },
+  'not-found': {
+    en: 'An animated 404 page with floating gradient digits.',
+    hi: 'तैरते ग्रेडिएंट अंकों वाला एनिमेटेड 404 पेज।',
+  },
+  'empty-state': {
+    en: 'A floating illustration for empty screens and zero results.',
+    hi: 'खाली स्क्रीन और बिना नतीजों के लिए तैरता इलस्ट्रेशन।',
+  },
+  'success-check': {
+    en: 'A checkmark that draws itself — perfect for confirmations.',
+    hi: 'खुद को ड्रॉ करता चेकमार्क — पुष्टि और सफलता के लिए।',
+  },
+  confetti: {
+    en: 'A lightweight celebration burst for wins and milestones.',
+    hi: 'जीत और खुशी के पलों के लिए हल्का कंफ़ेटी फटावट।',
+  },
+  'text-reveal': {
+    en: 'Text that rises in letter-by-letter or word-by-word.',
+    hi: 'अक्षर-दर-अक्षर या शब्द-दर-शब्द उभरता टेक्स्ट।',
+  },
+  typewriter: {
+    en: 'Terminal-style typing with a blinking caret and looping.',
+    hi: 'ब्लिंकिंग कर्सर के साथ टर्मिनल-स्टाइल टाइपिंग।',
+  },
+  'gradient-text': {
+    en: 'Headlines filled with a living, panning gradient.',
+    hi: 'जीवंत बहते ग्रेडिएंट से भरी हेडलाइन।',
+  },
+  marquee: {
+    en: 'Infinite horizontal scrolling for logos, tags and tickers.',
+    hi: 'लोगो और टैग के लिए अनंत हॉरिजॉन्टल स्क्रॉल।',
+  },
+  counter: {
+    en: 'Numbers that count up when scrolled into view.',
+    hi: 'स्क्रीन पर आते ही ऊपर की ओर बढ़ने लगते नंबर।',
+  },
+  'animated-button': {
+    en: 'Buttons with spring press feedback and shine or grow variants.',
+    hi: 'स्प्रिंग प्रेस और शाइन इफ़ेक्ट वाले बटन।',
+  },
+  toggle: {
+    en: 'A sliding switch for settings — controlled or uncontrolled.',
+    hi: 'सेटिंग्स के लिए स्लाइडिंग स्विच।',
+  },
+  'burger-icon': {
+    en: 'A hamburger icon that morphs into a close X.',
+    hi: 'हैमबर्गर आइकन जो बंद होने पर X बन जाता है।',
+  },
+  'tilt-card': {
+    en: 'Cards that tilt in 3D toward the user\u2019s cursor.',
+    hi: 'कर्सर की ओर 3D में झुकने वाले कार्ड।',
+  },
+  'fade-in': {
+    en: 'Fades content in with a soft rise on scroll.',
+    hi: 'स्क्रॉल पर हल्के उत्थान के साथ दिखता कंटेंट।',
+  },
+  'slide-in': {
+    en: 'Slides content in from any direction on scroll.',
+    hi: 'किसी भी दिशा से स्लाइड करके आता कंटेंट।',
+  },
+  stagger: {
+    en: 'Reveals children one-by-one in a staggered cascade.',
+    hi: 'एलिमेंट्स को एक-एक करके कैस्केड में दिखाता है।',
+  },
+  parallax: {
+    en: 'Moves layers at different scroll speeds for depth.',
+    hi: 'गहराई के लिए अलग स्क्रॉल गति से चलती परतें।',
+  },
+  'page-transition': {
+    en: 'Animated enter and exit transitions for routes.',
+    hi: 'पेज बदलने पर एनिमेटेड आगमन और विदाई।',
+  },
+  'gradient-mesh': {
+    en: 'Drifting color blobs forming a living mesh background.',
+    hi: 'रंगीन ब्लॉब्स से बना जीवंत मेश बैकग्राउंड।',
+  },
+  'floating-shapes': {
+    en: 'Ambient geometric shapes floating behind content.',
+    hi: 'कंटेंट के पीछे तैरते ज्यामितीय आकार।',
+  },
+  'wave-divider': {
+    en: 'A drifting SVG wave that separates page sections.',
+    hi: 'सेक्शन अलग करने वाली बहती SVG लहर।',
+  },
+  'particle-field': {
+    en: 'A rotating 3D sphere of particles rendered in WebGL.',
+    hi: 'WebGL में घूमता 3D कणों का गोला।',
+  },
+  'hero-banner': {
+    en: 'A full hero section — mesh background, staggered title, CTA.',
+    hi: 'पूरा हीरो सेक्शन — मेश बैकग्राउंड, टाइटल और CTA।',
+  },
+  'feature-reveal': {
+    en: 'Feature cards revealing one-by-one on scroll.',
+    hi: 'स्क्रॉल पर एक-एक करके दिखने वाले फीचर कार्ड।',
+  },
+  'cta-block': {
+    en: 'A centered call-to-action with a gradient headline.',
+    hi: 'ग्रेडिएंट हेडलाइन वाला केंद्रित कॉल-टू-एक्शन।',
+  },
+};

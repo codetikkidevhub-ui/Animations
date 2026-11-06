@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface ToggleProps {
   checked?: boolean;
@@ -8,6 +9,7 @@ export interface ToggleProps {
   disabled?: boolean;
   /** Track width in px. */
   width?: number;
+  /** On-state track color. Defaults to theme accent when themed. */
   color?: string;
   label?: string;
   className?: string;
@@ -21,15 +23,19 @@ export function Toggle({
   onChange,
   disabled = false,
   width = 48,
-  color = '#6366f1',
+  color,
   label,
   className,
   style,
 }: ToggleProps) {
+  const m = useMotionPrefs();
+  const accent = color ?? (m.themed ? m.tokens.colors.accent : '#6366f1');
+  const trackOff = m.themed ? m.tokens.colors.muted : 'rgba(128,128,128,0.35)';
   const [internal, setInternal] = useState(defaultChecked);
   const on = checked ?? internal;
   const height = width / 2;
   const knob = height - 6;
+  const noMotion = m.reduce ? 'none' : undefined;
 
   const toggle = () => {
     if (disabled) return;
@@ -65,9 +71,9 @@ export function Toggle({
           width,
           height,
           borderRadius: 999,
-          backgroundColor: on ? color : 'rgba(128,128,128,0.35)',
+          backgroundColor: on ? accent : trackOff,
           position: 'relative',
-          transition: 'background-color 0.25s ease',
+          transition: noMotion ?? 'background-color 0.25s ease',
           flexShrink: 0,
         }}
       >
@@ -81,7 +87,7 @@ export function Toggle({
             borderRadius: '50%',
             backgroundColor: '#fff',
             boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-            transition: 'left 0.25s cubic-bezier(0.34, 1.4, 0.64, 1)',
+            transition: noMotion ?? 'left 0.25s cubic-bezier(0.34, 1.4, 0.64, 1)',
           }}
         />
       </span>

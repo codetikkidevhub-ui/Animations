@@ -27,9 +27,9 @@ export function CopyButton({ text }: { text: string }) {
         fontSize: 12,
         fontWeight: 600,
         borderRadius: 6,
-        border: '1px solid #334155',
-        background: copied ? '#14532d' : '#1e1e30',
-        color: copied ? '#86efac' : '#94a3b8',
+        border: '1px solid var(--site-border-strong)',
+        background: copied ? '#14532d' : 'var(--site-surface3)',
+        color: copied ? '#86efac' : 'var(--site-text-dim)',
         cursor: 'pointer',
         transition: 'all 0.2s ease',
       }}

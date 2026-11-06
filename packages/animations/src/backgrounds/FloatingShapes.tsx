@@ -1,5 +1,9 @@
 import { useMemo } from 'react';
 import type { CSSProperties } from 'react';
+import { ensureKeyframes, KF } from '../runtime/keyframes';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
+import { useSeed, mulberry32 } from '../utils/seed';
+import { positiveNumber } from '../runtime/devWarn';
 
 export interface FloatingShapesProps {
   count?: number;
@@ -8,6 +12,8 @@ export interface FloatingShapesProps {
   /** Max shape size in px. */
   maxSize?: number;
   opacity?: number;
+  /** Seed for reproducible layout; omit for a fresh arrangement every mount. */
+  seed?: number;
   className?: string;
   style?: CSSProperties;
 }
@@ -24,36 +30,49 @@ interface Shape {
 
 /** Gently floating geometric shapes — decorative background layer. */
 export function FloatingShapes({
-  count = 12,
-  colors = ['#6366f1', '#ec4899', '#f59e0b', '#3b82f6', '#22c55e'],
+  count,
+  colors,
   shapes = ['circle', 'square', 'triangle'],
   maxSize = 40,
   opacity = 0.35,
+  seed,
   className,
   style,
 }: FloatingShapesProps) {
-  const items = useMemo<Shape[]>(
-    () =>
-      Array.from({ length: count }, (_, i) => ({
-        left: Math.random() * 100,
-        top: Math.random() * 100,
-        size: 12 + Math.random() * maxSize,
-        color: colors[i % colors.length],
-        kind: shapes[i % shapes.length],
-        duration: 4 + Math.random() * 5,
-        delay: Math.random() * -6,
-      })),
-    [count, colors, shapes, maxSize],
-  );
+  const m = useMotionPrefs();
+  const floatX = ensureKeyframes('float-x', KF.floatX);
+  const s = useSeed(seed);
 
-  const render = (s: Shape, i: number) => {
+  const n = Math.max(1, Math.floor(positiveNumber(count, 12, 'count')));
+  const palette =
+    colors && colors.length > 0
+      ? colors
+      : m.themed
+        ? [m.tokens.colors.accent, m.tokens.colors.accent2, m.tokens.colors.muted]
+        : ['#6366f1', '#ec4899', '#f59e0b', '#3b82f6', '#22c55e'];
+  const total = m.tier === 'lite' ? Math.max(4, Math.floor(n / 2)) : n;
+
+  const items = useMemo<Shape[]>(() => {
+    const rand = mulberry32(s);
+    return Array.from({ length: total }, (_, i) => ({
+      left: rand() * 100,
+      top: rand() * 100,
+      size: 12 + rand() * maxSize,
+      color: palette[i % palette.length],
+      kind: shapes[i % shapes.length],
+      duration: (4 + rand() * 5) * m.durationScale,
+      delay: rand() * -6,
+    }));
+  }, [total, palette, shapes, maxSize, s, m.durationScale]);
+
+  const render = (sh: Shape, i: number) => {
     const common: CSSProperties = {
       position: 'absolute',
-      left: `${s.left}%`,
-      top: `${s.top}%`,
-      animation: `anim-float-x ${s.duration}s ease-in-out ${s.delay}s infinite`,
+      left: `${sh.left}%`,
+      top: `${sh.top}%`,
+      animation: m.reduce ? 'none' : `${floatX} ${sh.duration}s ease-in-out ${sh.delay}s infinite`,
     };
-    if (s.kind === 'triangle') {
+    if (sh.kind === 'triangle') {
       return (
         <span
           key={i}
@@ -61,9 +80,9 @@ export function FloatingShapes({
             ...common,
             width: 0,
             height: 0,
-            borderLeft: `${s.size / 2}px solid transparent`,
-            borderRight: `${s.size / 2}px solid transparent`,
-            borderBottom: `${s.size}px solid ${s.color}`,
+            borderLeft: `${sh.size / 2}px solid transparent`,
+            borderRight: `${sh.size / 2}px solid transparent`,
+            borderBottom: `${sh.size}px solid ${sh.color}`,
           }}
         />
       );
@@ -73,10 +92,10 @@ export function FloatingShapes({
         key={i}
         style={{
           ...common,
-          width: s.size,
-          height: s.size,
-          backgroundColor: s.color,
-          borderRadius: s.kind === 'circle' ? '50%' : 6,
+          width: sh.size,
+          height: sh.size,
+          backgroundColor: sh.color,
+          borderRadius: sh.kind === 'circle' ? '50%' : 6,
         }}
       />
     );

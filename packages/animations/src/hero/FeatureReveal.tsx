@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { Stagger, StaggerItem } from '../scroll/Stagger';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
+import { withAlpha } from '../utils/color';
 
 export interface Feature {
   icon?: ReactNode;
@@ -25,6 +27,7 @@ export function FeatureReveal({
   className,
   style,
 }: FeatureRevealProps) {
+  const m = useMotionPrefs();
   return (
     <Stagger
       stagger={stagger}
@@ -41,18 +44,18 @@ export function FeatureReveal({
           <div
             style={{
               padding: 24,
-              borderRadius: 14,
-              border: '1px solid rgba(128,128,128,0.2)',
-              background: 'rgba(255,255,255,0.04)',
+              borderRadius: m.themed ? m.tokens.radius : 14,
+              border: `1px solid ${m.themed ? withAlpha(m.tokens.colors.muted, 0.25) : 'rgba(128,128,128,0.2)'}`,
+              background: m.themed ? withAlpha(m.tokens.colors.surface, 0.6) : 'rgba(255,255,255,0.04)',
               height: '100%',
               boxSizing: 'border-box',
               ...cardStyle,
             }}
           >
             {f.icon && <div style={{ fontSize: '1.75rem', marginBottom: 12 }}>{f.icon}</div>}
-            <h3 style={{ margin: '0 0 8px', fontSize: '1.05rem', fontWeight: 700 }}>{f.title}</h3>
+            <h3 style={{ margin: '0 0 8px', fontSize: '1.05rem', fontWeight: 700, color: m.themed ? m.tokens.colors.text : undefined }}>{f.title}</h3>
             {f.description && (
-              <p style={{ margin: 0, opacity: 0.7, fontSize: '0.95rem', lineHeight: 1.5 }}>
+              <p style={{ margin: 0, opacity: 0.7, fontSize: '0.95rem', lineHeight: 1.5, color: m.themed ? m.tokens.colors.text : undefined }}>
                 {f.description}
               </p>
             )}

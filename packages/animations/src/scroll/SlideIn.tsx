@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import type { CSSProperties, ReactNode } from 'react';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface SlideInProps {
   children: ReactNode;
@@ -31,15 +32,16 @@ export function SlideIn({
   className,
   style,
 }: SlideInProps) {
+  const m = useMotionPrefs();
   const { x, y } = offsets[from];
   return (
     <motion.div
       className={className}
       style={style}
-      initial={{ opacity: 0, x: x * distance, y: y * distance }}
+      initial={m.reduce ? false : { opacity: 0, x: x * distance, y: y * distance }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once, margin: '-60px' }}
-      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: duration * m.durationScale, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>

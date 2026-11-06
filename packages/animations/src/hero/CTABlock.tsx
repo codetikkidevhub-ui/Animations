@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { GradientText } from '../text/GradientText';
 import { AnimatedButton } from '../micro/AnimatedButton';
 import { FadeIn } from '../scroll/FadeIn';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface CTABlockProps {
   title: string;
@@ -26,6 +27,7 @@ export function CTABlock({
   className,
   style,
 }: CTABlockProps) {
+  const m = useMotionPrefs();
   return (
     <FadeIn
       className={className}
@@ -40,7 +42,7 @@ export function CTABlock({
         ...style,
       }}
     >
-      <h2 style={{ margin: 0, fontSize: 'clamp(1.75rem, 5vw, 3rem)', fontWeight: 800 }}>
+      <h2 style={{ margin: 0, fontSize: 'clamp(1.75rem, 5vw, 3rem)', fontWeight: 800, color: m.themed ? m.tokens.colors.text : undefined }}>
         {title} {highlight && <GradientText>{highlight}</GradientText>}
       </h2>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>

@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { GradientMesh } from '../backgrounds/GradientMesh';
 import { TextReveal } from '../text/TextReveal';
 import { AnimatedButton } from '../micro/AnimatedButton';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface HeroBannerProps {
   title: string;
@@ -29,6 +30,8 @@ export function HeroBanner({
   className,
   style,
 }: HeroBannerProps) {
+  const m = useMotionPrefs();
+  const ink = m.themed ? m.tokens.colors.text : undefined;
   return (
     <section
       className={className}
@@ -48,11 +51,11 @@ export function HeroBanner({
     >
       <GradientMesh colors={gradientColors} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 760 }}>
-        <h1 style={{ margin: 0, fontSize: 'clamp(2.25rem, 6vw, 4rem)', fontWeight: 800, lineHeight: 1.1 }}>
+        <h1 style={{ margin: 0, fontSize: 'clamp(2.25rem, 6vw, 4rem)', fontWeight: 800, lineHeight: 1.1, color: ink }}>
           <TextReveal text={title} by="words" stagger={0.06} />
         </h1>
         {subtitle && (
-          <p style={{ margin: '20px auto 0', fontSize: '1.15rem', opacity: 0.75, maxWidth: 560 }}>
+          <p style={{ margin: '20px auto 0', fontSize: '1.15rem', opacity: 0.75, maxWidth: 560, color: ink }}>
             {subtitle}
           </p>
         )}

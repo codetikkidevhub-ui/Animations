@@ -1,9 +1,12 @@
 import type { CSSProperties } from 'react';
+import { ensureKeyframes, KF } from '../runtime/keyframes';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
+import { positiveNumber } from '../runtime/devWarn';
 
 export interface SpinnerProps {
   /** Diameter in px. */
   size?: number;
-  /** Border color — accepts any CSS color. */
+  /** Border color — accepts any CSS color. Defaults to theme accent when themed. */
   color?: string;
   /** Ring thickness in px. */
   thickness?: number;
@@ -16,20 +19,28 @@ export interface SpinnerProps {
 }
 
 export function Spinner({
-  size = 32,
-  color = 'currentColor',
-  thickness = 3,
+  size,
+  color,
+  thickness,
   speed = 0.8,
   variant = 'ring',
   className,
   style,
 }: SpinnerProps) {
+  const m = useMotionPrefs();
+  const spin = ensureKeyframes('spin', KF.spin);
+  const spinReverse = ensureKeyframes('spin-reverse', KF.spinReverse);
+
+  const s = positiveNumber(size, 32, 'size');
+  const t = positiveNumber(thickness, 3, 'thickness');
+  const arc = color ?? (m.themed ? m.tokens.colors.accent : 'currentColor');
+
   const ring: CSSProperties = {
-    width: size,
-    height: size,
+    width: s,
+    height: s,
     borderRadius: '50%',
-    border: `${thickness}px solid transparent`,
-    animation: `anim-spin ${speed}s linear infinite`,
+    border: `${t}px solid transparent`,
+    animation: m.anim(spin, speed, 'linear'),
   };
 
   return (
@@ -43,19 +54,19 @@ export function Spinner({
         <span
           style={{
             ...ring,
-            borderTopColor: color,
-            borderRightColor: color,
+            borderTopColor: arc,
+            borderRightColor: arc,
             display: 'block',
           }}
         />
       ) : (
-        <span style={{ position: 'relative', display: 'block', width: size, height: size }}>
+        <span style={{ position: 'relative', display: 'block', width: s, height: s }}>
           <span
             style={{
               ...ring,
               position: 'absolute',
               inset: 0,
-              borderTopColor: color,
+              borderTopColor: arc,
               display: 'block',
             }}
           />
@@ -63,11 +74,11 @@ export function Spinner({
             style={{
               ...ring,
               position: 'absolute',
-              inset: thickness * 2,
-              width: size - thickness * 4,
-              height: size - thickness * 4,
-              borderBottomColor: color,
-              animationName: 'anim-spin-reverse',
+              inset: t * 2,
+              width: s - t * 4,
+              height: s - t * 4,
+              borderBottomColor: arc,
+              animationName: spinReverse,
               display: 'block',
             }}
           />

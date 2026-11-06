@@ -1,4 +1,8 @@
+import { useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
+import { ensureKeyframes, KF } from '../runtime/keyframes';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
+import { positiveNumber } from '../runtime/devWarn';
 
 export interface MarqueeProps {
   children: ReactNode;
@@ -14,7 +18,7 @@ export interface MarqueeProps {
   style?: CSSProperties;
 }
 
-/** Infinite horizontal scroll. Requires `@codetikki/animations/styles.css`. */
+/** Infinite horizontal scroll. */
 export function Marquee({
   children,
   speed = 20,
@@ -25,9 +29,17 @@ export function Marquee({
   className,
   style,
 }: MarqueeProps) {
+  const m = useMotionPrefs();
+  const track = ensureKeyframes(
+    direction === 'right' ? 'marquee-reverse' : 'marquee',
+    direction === 'right' ? KF.marqueeReverse : KF.marquee,
+  );
+  const [hovered, setHovered] = useState(false);
+  const n = Math.max(1, Math.floor(positiveNumber(repeat, 2, 'repeat')));
+
   const half = (
     <>
-      {Array.from({ length: repeat }, (_, i) => (
+      {Array.from({ length: n }, (_, i) => (
         <span key={i} style={{ display: 'inline-flex', alignItems: 'center' }}>
           {children}
         </span>
@@ -37,9 +49,9 @@ export function Marquee({
 
   return (
     <div
-      className={`${direction === 'right' ? 'anim-marquee-reverse' : ''} ${
-        pauseOnHover ? 'anim-marquee-pause' : ''
-      } ${className ?? ''}`}
+      className={className}
+      onMouseEnter={pauseOnHover ? () => setHovered(true) : undefined}
+      onMouseLeave={pauseOnHover ? () => setHovered(false) : undefined}
       style={{
         overflow: 'hidden',
         maskImage: fadeEdges
@@ -52,8 +64,13 @@ export function Marquee({
       }}
     >
       <div
-        className="anim-marquee-track"
-        style={{ ['--anim-marquee-duration' as string]: `${speed}s` }}
+        style={{
+          display: 'inline-flex',
+          whiteSpace: 'nowrap',
+          willChange: 'transform',
+          animation: m.anim(track, speed, 'linear'),
+          animationPlayState: hovered ? 'paused' : undefined,
+        }}
       >
         {half}
         {half}

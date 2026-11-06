@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'react';
+import { ensureKeyframes, KF } from '../runtime/keyframes';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface WaveDividerProps {
   /** Fill color of the wave — usually the color of the section below. */
@@ -21,6 +23,9 @@ export function WaveDivider({
   className,
   style,
 }: WaveDividerProps) {
+  const m = useMotionPrefs();
+  const drift = ensureKeyframes('wave-drift', KF.waveDrift);
+
   const wave = (
     <svg
       viewBox="0 0 1200 120"
@@ -52,7 +57,8 @@ export function WaveDivider({
           display: 'flex',
           width: '200%',
           height: '100%',
-          animation: speed > 0 ? `anim-wave-drift ${speed}s linear infinite` : undefined,
+          animation:
+            speed > 0 && !m.reduce ? `${drift} ${speed * m.durationScale}s linear infinite` : undefined,
         }}
       >
         {wave}

@@ -7,6 +7,25 @@ export { Skeleton } from './loading/Skeleton';
 export type { SkeletonProps } from './loading/Skeleton';
 export { ProgressBar } from './loading/ProgressBar';
 export type { ProgressBarProps } from './loading/ProgressBar';
+export { Tesseract } from './loading/Tesseract';
+export type { TesseractProps } from './loading/Tesseract';
+
+// Canvas loaders (high-complexity)
+export { OrbitForge } from './loaders/OrbitForge';
+export type { OrbitForgeProps } from './loaders/OrbitForge';
+export { SacredBloom } from './loaders/SacredBloom';
+export type { SacredBloomProps } from './loaders/SacredBloom';
+export { NeonPulse } from './loaders/NeonPulse';
+export type { NeonPulseProps } from './loaders/NeonPulse';
+export { QuantumGrid } from './loaders/QuantumGrid';
+export type { QuantumGridProps } from './loaders/QuantumGrid';
+export { HelixDNA } from './loaders/HelixDNA';
+export type { HelixDNAProps } from './loaders/HelixDNA';
+export { CometTrail } from './loaders/CometTrail';
+export type { CometTrailProps } from './loaders/CometTrail';
+export { LoaderCanvas } from './loaders/LoaderCanvas';
+export type { LoaderCanvasProps, LoaderDrawContext } from './loaders/LoaderCanvas';
+export * from './loaders/gallery';
 
 // Status pages
 export { NotFound } from './status/NotFound';
@@ -73,3 +92,14 @@ export { useInView } from './hooks/useInView';
 export type { UseInViewOptions } from './hooks/useInView';
 export { useMousePosition } from './hooks/useMousePosition';
 export { useScrollProgress } from './hooks/useScrollProgress';
+export { useReducedMotion } from './hooks/useReducedMotion';
+export { usePerfTier } from './hooks/usePerfTier';
+export type { PerfTier } from './hooks/usePerfTier';
+
+// Theming
+export { AnimationProvider } from './runtime/AnimationProvider';
+export type { AnimationProviderProps, AnimationContextValue, ThemeInput, ModeInput } from './runtime/AnimationProvider';
+export { useAnimationTheme } from './runtime/AnimationProvider';
+export { PRESETS, DEFAULT_PRESET } from './theme/presets';
+export type { PresetName, ThemePreset } from './theme/presets';
+export type { ThemeTokens } from './theme/tokens';

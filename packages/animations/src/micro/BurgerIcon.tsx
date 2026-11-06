@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface BurgerIconProps {
   /** true = shows an X, false = shows the hamburger. */
@@ -21,6 +22,7 @@ export function BurgerIcon({
   className,
   style,
 }: BurgerIconProps) {
+  const m = useMotionPrefs();
   const gap = size / 4;
   const bar = (i: number): CSSProperties => {
     const offset = (i - 1) * gap;
@@ -32,7 +34,9 @@ export function BurgerIcon({
       height: lineWidth,
       borderRadius: lineWidth,
       backgroundColor: color,
-      transition: 'transform 0.3s cubic-bezier(0.34, 1.3, 0.64, 1), opacity 0.2s ease',
+      transition: m.reduce
+        ? 'none'
+        : 'transform 0.3s cubic-bezier(0.34, 1.3, 0.64, 1), opacity 0.2s ease',
       transform: `translateY(${offset - lineWidth / 2}px)`,
     };
     if (!open) return base;

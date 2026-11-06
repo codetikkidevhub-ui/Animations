@@ -1,33 +1,49 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { AnimationProvider, PRESETS, type PresetName } from '@codetikki/animations';
 import { CodeBlock } from './components/CodeBlock';
+import { ReelDemo } from './components/ReelDemo';
 import { Sidebar } from './components/Sidebar';
-import { registry } from './registry';
+import { registry, EXPLAINERS } from './registry';
+
+type Mode = 'light' | 'dark' | 'auto';
+type SiteTheme = 'light' | 'dark';
+
+const selectStyle: React.CSSProperties = {
+  background: 'var(--site-surface3)',
+  color: 'var(--site-text-dim)',
+  border: '1px solid var(--site-border-strong)',
+  borderRadius: 8,
+  padding: '6px 10px',
+  fontSize: 13,
+  fontFamily: 'inherit',
+  cursor: 'pointer',
+};
 
 function PropsTable({ entry }: { entry: (typeof registry)[number] }) {
   if (!entry.props?.length) return null;
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
       <thead>
-        <tr style={{ textAlign: 'left', color: '#64748b' }}>
-          <th style={{ padding: '6px 10px', borderBottom: '1px solid #1e293b' }}>Prop</th>
-          <th style={{ padding: '6px 10px', borderBottom: '1px solid #1e293b' }}>Type</th>
-          <th style={{ padding: '6px 10px', borderBottom: '1px solid #1e293b' }}>Default</th>
-          <th style={{ padding: '6px 10px', borderBottom: '1px solid #1e293b' }}>Description</th>
+        <tr style={{ textAlign: 'left', color: 'var(--site-muted)' }}>
+          <th style={{ padding: '6px 10px', borderBottom: '1px solid var(--site-border)' }}>Prop</th>
+          <th style={{ padding: '6px 10px', borderBottom: '1px solid var(--site-border)' }}>Type</th>
+          <th style={{ padding: '6px 10px', borderBottom: '1px solid var(--site-border)' }}>Default</th>
+          <th style={{ padding: '6px 10px', borderBottom: '1px solid var(--site-border)' }}>Description</th>
         </tr>
       </thead>
       <tbody>
         {entry.props.map((p) => (
           <tr key={p.name}>
-            <td style={{ padding: '6px 10px', borderBottom: '1px solid #141422', fontFamily: 'monospace', color: '#c7d2fe' }}>
+            <td style={{ padding: '6px 10px', borderBottom: '1px solid var(--site-card)', fontFamily: 'monospace', color: 'var(--site-code)' }}>
               {p.name}
             </td>
-            <td style={{ padding: '6px 10px', borderBottom: '1px solid #141422', fontFamily: 'monospace', color: '#94a3b8' }}>
+            <td style={{ padding: '6px 10px', borderBottom: '1px solid var(--site-card)', fontFamily: 'monospace', color: 'var(--site-text-dim)' }}>
               {p.type}
             </td>
-            <td style={{ padding: '6px 10px', borderBottom: '1px solid #141422', fontFamily: 'monospace', color: '#64748b' }}>
+            <td style={{ padding: '6px 10px', borderBottom: '1px solid var(--site-card)', fontFamily: 'monospace', color: 'var(--site-muted)' }}>
               {p.default ?? '—'}
             </td>
-            <td style={{ padding: '6px 10px', borderBottom: '1px solid #141422', color: '#94a3b8' }}>
+            <td style={{ padding: '6px 10px', borderBottom: '1px solid var(--site-card)', color: 'var(--site-text-dim)' }}>
               {p.description}
             </td>
           </tr>
@@ -39,7 +55,35 @@ function PropsTable({ entry }: { entry: (typeof registry)[number] }) {
 
 export function App() {
   const [activeId, setActiveId] = useState(registry[0].id);
+  const [theme, setTheme] = useState<PresetName>('midnight');
+  const [mode, setMode] = useState<Mode>('dark');
+  const [siteTheme, setSiteTheme] = useState<SiteTheme>(
+    () => (localStorage.getItem('site-theme') as SiteTheme) || 'dark',
+  );
   const entry = useMemo(() => registry.find((e) => e.id === activeId)!, [activeId]);
+
+  useEffect(() => {
+    document.documentElement.dataset.siteTheme = siteTheme;
+    localStorage.setItem('site-theme', siteTheme);
+  }, [siteTheme]);
+
+  const usageCode = useMemo(() => {
+    const isThree = entry.name.includes('3D');
+    const pkg = isThree ? '@codetikki/animations/three' : '@codetikki/animations';
+    const names = entry.name
+      .replace(/\(.*?\)/g, '')
+      .split('/')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .join(', ');
+    return `# 1. add the library to your project
+npm i @codetikki/animations motion react react-dom
+
+# 2. import the component — no CSS import or setup needed
+import { ${names} } from '${pkg}';
+
+${entry.usage}`;
+  }, [entry]);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -51,40 +95,119 @@ export function App() {
         }}
       />
       <main style={{ flex: 1, padding: '40px 48px', maxWidth: 900, boxSizing: 'border-box' }}>
-        <div style={{ fontSize: 12, color: '#64748b', marginBottom: 6 }}>{entry.category}</div>
-        <h1 style={{ margin: '0 0 24px', fontSize: 28, fontWeight: 800 }}>{entry.name}</h1>
-
         <div
           style={{
-            border: '1px dashed #334155',
-            borderRadius: 14,
-            minHeight: entry.tall ? 260 : 140,
-            display: 'grid',
-            placeItems: 'center',
-            padding: 24,
-            marginBottom: 28,
-            background: '#0d0d17',
-            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            marginBottom: 24,
+            padding: '10px 14px',
+            border: '1px solid var(--site-border)',
+            borderRadius: 12,
+            background: 'var(--site-surface2)',
+            position: 'sticky',
+            top: 12,
+            zIndex: 10,
           }}
         >
-          <entry.Demo />
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--site-muted)' }}>Theme</span>
+          <select
+            value={theme}
+            onChange={(e) => setTheme(e.target.value as PresetName)}
+            style={selectStyle}
+          >
+            {(Object.keys(PRESETS) as PresetName[]).map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <div style={{ display: 'flex', gap: 4 }}>
+            {(['auto', 'light', 'dark'] as Mode[]).map((mo) => (
+              <button
+                key={mo}
+                onClick={() => setMode(mo)}
+                style={{
+                  ...selectStyle,
+                  padding: '6px 12px',
+                  border: `1px solid ${mode === mo ? 'var(--site-accent)' : 'var(--site-border-strong)'}`,
+                  color: mode === mo ? 'var(--site-code)' : 'var(--site-muted)',
+                  background: mode === mo ? 'var(--site-accent-soft)' : 'var(--site-surface3)',
+                }}
+              >
+                {mo}
+              </button>
+            ))}
+          </div>
+          <span style={{ fontSize: 11, color: 'var(--site-faint)' }}>
+            {'<AnimationProvider>'}
+          </span>
+          <button
+            onClick={() => setSiteTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+            title="Toggle site theme"
+            style={{
+              ...selectStyle,
+              marginLeft: 'auto',
+              padding: '6px 12px',
+              fontSize: 15,
+              lineHeight: 1,
+            }}
+          >
+            {siteTheme === 'dark' ? '☀️' : '🌙'}
+          </button>
         </div>
+        <div style={{ fontSize: 12, color: 'var(--site-muted)', marginBottom: 6 }}>{entry.category}</div>
+        <h1 style={{ margin: '0 0 24px', fontSize: 28, fontWeight: 800, color: 'var(--site-text)' }}>{entry.name}</h1>
+
+        <AnimationProvider theme={theme} mode={mode}>
+          <div
+            style={{
+              position: 'relative',
+              border: '1px dashed var(--site-border-strong)',
+              borderRadius: 14,
+              minHeight: entry.tall ? 260 : 140,
+              display: 'grid',
+              placeItems: 'center',
+              padding: 24,
+              marginBottom: 28,
+              background: 'var(--site-surface)',
+              overflow: 'hidden',
+            }}
+          >
+            <entry.Demo />
+            <div style={{ position: 'absolute', right: 14, bottom: 12, zIndex: 2 }}>
+              <ReelDemo
+                caption={entry.name}
+                code={usageCode}
+                explainer={
+                  EXPLAINERS[entry.id] ?? {
+                    en: `${entry.name} — a ${entry.category.toLowerCase()} animation from codetikki.`,
+                  }
+                }
+              >
+                <entry.Demo />
+              </ReelDemo>
+            </div>
+          </div>
+        </AnimationProvider>
 
         {entry.props?.length ? (
           <>
-            <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 10px', color: '#cbd5e1' }}>Props</h2>
+            <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 10px', color: 'var(--site-text)' }}>Props</h2>
             <div style={{ marginBottom: 28 }}>
               <PropsTable entry={entry} />
             </div>
           </>
         ) : null}
 
-        <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 10px', color: '#cbd5e1' }}>Usage</h2>
+        <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 10px', color: 'var(--site-text)' }}>
+          Usage — add to your project
+        </h2>
         <div style={{ marginBottom: 28 }}>
-          <CodeBlock code={entry.usage} label="usage" />
+          <CodeBlock code={usageCode} label="how to use" />
         </div>
 
-        <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 10px', color: '#cbd5e1' }}>
+        <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 10px', color: 'var(--site-text)' }}>
           Source — copy into your project
         </h2>
         <CodeBlock code={entry.code} label={`${entry.name}.tsx`} />

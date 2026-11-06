@@ -12,7 +12,7 @@ A categorized React animation library — loading states, 404/status pages, text
 
 ## Categories
 
-- **Loading & progress** — `Spinner`, `Dots`, `Skeleton`, `ProgressBar`
+- **Loading & progress** — `Spinner`, `Dots`, `Skeleton`, `ProgressBar`, `Tesseract`
 - **Status pages** — `NotFound` (404), `EmptyState`, `SuccessCheck`, `Confetti`
 - **Text & typography** — `TextReveal`, `Typewriter`, `GradientText`, `Marquee`, `Counter`
 - **Micro-interactions** — `AnimatedButton`, `Toggle`, `BurgerIcon`, `TiltCard`
@@ -27,13 +27,16 @@ npm install @codetikki/animations motion react react-dom
 ```
 
 ```tsx
-import '@codetikki/animations/styles.css';
 import { Spinner, TextReveal, NotFound } from '@codetikki/animations';
 
 <Spinner variant="dual" />
 <TextReveal text="Hello world" by="words" />
 <NotFound homeHref="/" />
 ```
+
+No CSS import or setup needed — every component injects its own styles.
+Optionally wrap your app in `<AnimationProvider theme="diwali" mode="auto">`
+to theme all components from the built-in preset gallery (10 themes × light/dark).
 
 3D components live behind a separate entry point so `three` stays optional:
 

@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import type { CSSProperties } from 'react';
+import { useMotionPrefs } from '../runtime/useMotionPrefs';
 
 export interface TextRevealProps {
   text: string;
@@ -28,6 +29,7 @@ export function TextReveal({
   className,
   style,
 }: TextRevealProps) {
+  const m = useMotionPrefs();
   const units = by === 'words' ? text.split(' ') : text.split('');
 
   return (
@@ -37,7 +39,7 @@ export function TextReveal({
       initial="hidden"
       whileInView="visible"
       viewport={{ once }}
-      transition={{ staggerChildren: stagger, delayChildren: delay }}
+      transition={{ staggerChildren: stagger * m.durationScale, delayChildren: delay }}
       aria-label={text}
     >
       {units.map((unit, i) => (
@@ -45,18 +47,22 @@ export function TextReveal({
           key={i}
           aria-hidden
           style={{ display: 'inline-block', whiteSpace: 'pre' }}
-          variants={{
-            hidden: { opacity: 0, y, filter: 'blur(4px)' },
-            visible: {
-              opacity: 1,
-              y: 0,
-              filter: 'blur(0px)',
-              transition: { duration: 0.4, ease: 'easeOut' },
-            },
-          }}
+          variants={
+            m.reduce
+              ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+              : {
+                  hidden: { opacity: 0, y, filter: 'blur(4px)' },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    filter: 'blur(0px)',
+                    transition: { duration: 0.4 * m.durationScale, ease: 'easeOut' },
+                  },
+                }
+          }
         >
           {unit}
-          {by === 'words' && i < units.length - 1 ? ' ' : ''}
+          {by === 'words' && i < units.length - 1 ? ' ' : ''}
         </motion.span>
       ))}
     </motion.span>
